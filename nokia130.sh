@@ -4,7 +4,17 @@ make_audio_as_video(){
     #ffmpeg -loop 1 -shortest -y -i "$1" -i "$2" -c:v mpeg4 -q:v 6 -c:a mp3 -vf -s 160x128 converted_output.mp4
     #ffmpeg -loop 1 -shortest -y -i "$1" -i "$2" -acodec copy -vcodec mpeg4 result.avi
     #ffmpeg -loop 1 -shortest -y -i "$1" -i "$2" -acodec copy -vcodec mjpeg result.avi
-    ffmpeg -loop 1 -i "$1" -i "$2" -c:v mpeg4 -tune stillimage -c:a mp3 -b 1k -s 160x128 -filter:a "volume=1.5" -shortest "$3"
+    if [ -z "$3" ]; then
+        name="${2%.*}"_nokia130.mp4
+    else
+        name=$3
+    fi
+
+    ffmpeg -loop 1 -i "$1" -i "$2" -c:v mpeg4 -tune stillimage -c:a mp3 -b 1k -s 160x128 -filter:a "volume=1.5" -shortest "$name"
+
+    echo $(readlink -f "$name" )
+
+
     #while getopts ":f:d:" opt;do
     #    case $opt in
     #        f) file="$OPTARG"
@@ -30,4 +40,8 @@ make_audio_as_video(){
     #done
 }
 
-make_audio_as_video "$1" "$2" "$3"
+if [ "$1" = "audio-to-video" ];then
+    make_audio_as_video "$2" "$3" "$4"
+else
+    echo "Command '$1' not supported"
+fi
