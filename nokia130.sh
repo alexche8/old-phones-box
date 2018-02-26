@@ -1,47 +1,28 @@
 #!/bin/bash
 
-make_audio_as_video(){
-    #ffmpeg -loop 1 -shortest -y -i "$1" -i "$2" -c:v mpeg4 -q:v 6 -c:a mp3 -vf -s 160x128 converted_output.mp4
-    #ffmpeg -loop 1 -shortest -y -i "$1" -i "$2" -acodec copy -vcodec mpeg4 result.avi
-    #ffmpeg -loop 1 -shortest -y -i "$1" -i "$2" -acodec copy -vcodec mjpeg result.avi
+opb_images=$HOME/.opb_images
+
+mk_imageaudio(){
     if [ -z "$3" ]; then
-        name="${2%.*}"_nokia130.mp4
+        file_name="${1%.*}"_nokia130.mp4
     else
-        name=$3
+        file_name=$3
     fi
 
-    ffmpeg -loop 1 -i "$1" -i "$2" -c:v mpeg4 -tune stillimage -c:a mp3 -b 1k -s 160x128 -filter:a "volume=1.5" -shortest "$name"
+    if [ -z "$2" ]; then
+        image=$opb_images/default.jpg
+    else
+        image=$2
+    fi
 
-    echo $(readlink -f "$name" )
+    ffmpeg -loop 1 -i "$image" -i "$1" -c:v mpeg4 -tune stillimage \
+    -c:a mp3 -b 1k -s 160x128 -filter:a "volume=1.5" -shortest "$file_name"
 
-
-    #while getopts ":f:d:" opt;do
-    #    case $opt in
-    #        f) file="$OPTARG"
-    #        ;;
-    #        d) dir="$OPTARG"
-    #        ;;
-    #        \?) echo "Invalid option -$OPTARG" >&2
-    #        ;;
-    #    esac
-    #done
-    #if $file
-    #then
-    #    echo "$file"
-    #elif $dir
-    #then
-    #    echo "$dir"
-    #fi
-    #for file in $(find . -type f)
-    #do
-    #    #ffmpeg -i $ -c:v mpeg4 -q:v 6 -c:a mp3 -vf scale=160:-1 $ 
-    #    #ffmpeg -i $ -c:v mpeg4 -q:v 6 -c:a mp3 -vf -s 160x128 $
-    #    echo $file
-    #done
+    echo $(readlink -f "$file_name" )
 }
 
-if [ "$1" = "audio-to-video" ];then
-    make_audio_as_video "$2" "$3" "$4"
+if [ "$1" = "mk_imageaudio" ];then
+    mk_imageaudio "$2" "$3" "$4"
 else
     echo "Command '$1' not supported"
 fi
