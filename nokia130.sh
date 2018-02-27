@@ -21,17 +21,20 @@ mk_imageaudio(){
     echo $(readlink -f "$file_name" )
 }
 
+mk_blackaudio(){
+    #TODO create black screen video with mp3 audio
+    ffmpeg -loop 1 -i "$image" -i "$1" -c:v mpeg4 -tune stillimage \
+    -c:a mp3 -b 1k -s 160x128 -filter:a "volume=1.5" -shortest "$file_name"
+}
+
 mk_textedaudio(){
-    echo "hello"
+    #TODO create black/blue screen video with just text overlay and input mp3 file
 
-    ffmpeg -i "$1" -vf drawtext="/usr/share/fonts/truetype/freefont/FreeMonoBold.ttf: \
-text='Stack Overflow': fontcolor=white: fontsize=24: box=1: boxcolor=black@0.5: \
-boxborderw=5: x=(w-text_w)/2: y=(h-text_h)/2" -codec:a copy output.mp4
-
-ffmpeg  -i "$1" -f lavfi -i color=c=blue:s=160x128:d=0.5 -vf \
-"drawtext=fontfile=/usr/share/fonts/truetype/freefont/FreeMonoBold.ttf:fontsize=30: \
- fontcolor=white:x=(w-text_w)/2:y=(h-text_h)/2:text='Stack Overflow'" \
--codec:a copy output.mp4
+    ffmpeg  -i "$1" -f lavfi -i color=c=blue:s=160x128:d=0.5 -vf \
+    "drawtext=fontfile=/usr/share/fonts/truetype/freefont/FreeMonoBold.ttf:fontsize=30: \
+     fontcolor=white:x=(w-text_w)/2:y=(h-text_h)/2:text='Stack Overflow'" \
+     -loop 1 -r 24 \
+    -codec:a copy output.mp4
 }
 
 if [ "$1" = "mk_imageaudio" ];then
