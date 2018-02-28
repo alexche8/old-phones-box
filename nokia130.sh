@@ -13,16 +13,15 @@ mk_imageaudio(){
         file_name=$3
     fi
 
-    if [ -z "$2" ]; then
-        image=$opb_images/default.jpg
-    else
-        image=$2
-    fi
+    #if [ -z "$2" ]; then
+    #    image=$opb_images/default.jpg
+    #else
+    #    image=$2
+    #fi
 
     convert -size 32x32 xc:white default.jpg
-    image="default.jpg"
 
-    ffmpeg -loop 1 -i $image -i "$1" -c:v mpeg4 -tune stillimage \
+    ffmpeg -loop 1 -i default.jpg -i "$1" -c:v mpeg4 -tune stillimage \
     -c:a mp3 -b 1k -s 160x128 -filter:a "volume=1.5" -shortest "$file_name"
 
     echo $(readlink -f "$file_name" )
