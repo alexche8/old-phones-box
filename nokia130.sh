@@ -3,9 +3,10 @@
 opb_images=$HOME/.opb_images
 
 # 1. Make imageaudio, textedaudio, blackscreenaudio
-# 2. Fix tags for mp3 file to make right order
+# 2. Fix tags for mp3 file to make right order DONE
 # 3. Rename folder to Artist - [yyyy] Album
 # 4. Copy contact book.
+# 5. Fix tags for mp3 file to make right order set order:song to title if not works
 
 mk_imageaudio(){
     if [ -z "$3" ]; then
@@ -34,10 +35,17 @@ fix_songs_order(){
     find $1 -name *mp3 -exec eyeD3 --to-v1.1 {} \;
 }
 
+
+rename_folder(){
+    eyeD3 --nfo "$1" | grep Album -B 1 -A 1 | cut -d: -f2 | while read x; do echo $x; done
+}
+
 if [ "$1" = "mk_imageaudio" ];then
     mk_imageaudio "$2" "$3" "$4"
 elif [ "$1" = "fix_songs_order" ];then
     fix_songs_order "$2"
+elif [ "$1" = "rename_folder" ];then
+    rename_folder "$2"
 else
     echo "Command '$1' not supported"
 fi
