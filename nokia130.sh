@@ -15,6 +15,7 @@ mk_imageaudio(){
 
     #if [ -z "$2" ]; then
     #    image=$opb_images/default.jpg
+    #    image=${2:-$opb_images/default.jpg}
     #else
     #    image=$2
     #fi
