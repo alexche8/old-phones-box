@@ -38,12 +38,11 @@ fix_songs_order(){
 
 
 rename_folder(){
-    album_info=$(eyeD3 --nfo "$1" | grep Album -B 1 -A 1 | cut -d: -f2) #| while read x; do echo $x; done
-    var1=$(echo $album_info | cut -f1 -d' ')
-    var2=$(echo $album_info | cut -f2 -d' ')
-    var3=$(echo $album_info | cut -f3 -d' ')
-    album_title="${var1} ${var3} ${var2}"
-    mkdir $album_title
+    album_info=($(eyeD3 --nfo "$1" | grep Album -B 1 -A 1 | cut -d: -f2))
+    album_title="${album_info[0]} ${album_info[2]} ${album_info[1]}"
+    echo $album_title
+    # grep on each tag
+    #mkdir $album_title
 }
 
 if [ "$1" = "mk_imageaudio" ];then
