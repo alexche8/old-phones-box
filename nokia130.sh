@@ -4,7 +4,6 @@ opb_images=$HOME/.opb_images
 
 # 1. Make imageaudio, textedaudio, blackscreenaudio
 # 2. Fix tags for mp3 file to make right order DONE
-# 3. Rename folder to Artist - [yyyy] Album
 # 4. Copy contact book.
 # 5. Fix tags for mp3 file to make right order set order:song to title if not works
 
@@ -30,27 +29,28 @@ mk_imageaudio(){
     echo $(readlink -f "$file_name" )
 }
 
-fix_songs_order(){
-    # set id3 tags as 1.1
-    path=$1
-    find $1 -name *mp3 -exec eyeD3 --to-v1.1 {} \;
+format_tracks_titles(){
+    export PYTHONIOENCODING=utf8
+    new_title=$(eyeD3 -P display --pattern "%track%.%title%" "$1")
+    echo $new_title
+    eyeD3 --title="$new_title" "$1"
 }
 
 
-rename_folder(){
-    album_info=($(eyeD3 --nfo "$1" | grep Album -B 1 -A 1 | cut -d: -f2))
-    album_title="${album_info[0]} ${album_info[2]} ${album_info[1]}"
-    echo $album_title
-    # grep on each tag
-    #mkdir $album_title
+format_album_name(){
+    album=$(eyeD3 -P nfo "$1" | grep Album | cut -d: -f2)
+    artist=$(eyeD3 -P nfo "$1" | grep Artist | cut -d: -f2)
+    year=$(eyeD3 -P nfo "$1" | grep Recorded | cut -d: -f2)
+    mv "$1" "${artist:1}[${year:1}]-${album:1}"
+    echo -e "$1" formated as "${artist:1}[${year:1}]-${album:1}"
 }
 
 if [ "$1" = "mk_imageaudio" ];then
     mk_imageaudio "$2" "$3" "$4"
-elif [ "$1" = "fix_songs_order" ];then
-    fix_songs_order "$2"
-elif [ "$1" = "rename_folder" ];then
-    rename_folder "$2"
+elif [ "$1" = "format_tracks_titles" ];then
+    format_tracks_titles "$2"
+elif [ "$1" = "format_album_name" ];then
+    format_album_name "$2"
 else
     echo "Command '$1' not supported"
 fi
