@@ -4,10 +4,12 @@
 # 4. Copy contact book.
 # 6. Download youtube video and playlists
 
+export PYTHONIOENCODING=utf8
+
 mk_imageaudio(){
     file_name="${1%.*}"_nokia130.mp4
 
-    convert -size 32x32 xc:white default.jpg
+    convert -size 32x32 xc:black default.jpg
 
     ffmpeg -loop 1 -i default.jpg -i "$1" -c:v mpeg4 -tune stillimage \
     -c:a mp3 -b 1k -s 160x128 -filter:a "volume=1.5" -shortest "$file_name"
@@ -23,7 +25,8 @@ format_title_tag(){
 }
 
 format_title_tag_dir(){
-    for i in *.mp3; do
+    dir="$1"
+    for i in "$dir"*.mp3; do
         format_title_tag "$i"
     done;
 }
@@ -46,7 +49,7 @@ if [ "$1" = "mk_imageaudio" ];then
 elif [ "$1" = "format_tracks_titles" ];then
     format_tracks_titles "$2"
 elif [ "$1" = "format_title_tag_dir" ];then
-    format_title_tag_dir"$2"
+    format_title_tag_dir "$2"
 elif [ "$1" = "format_album_name" ];then
     format_album_name "$2"
 else
