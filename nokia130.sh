@@ -31,7 +31,6 @@ format_title_tag_dir(){
     done;
 }
 
-
 format_album_name(){
     album=$(eyeD3 -P nfo "$1" | grep Album | cut -d: -f2)
     artist=$(eyeD3 -P nfo "$1" | grep Artist | cut -d: -f2)
@@ -40,8 +39,11 @@ format_album_name(){
     echo -e "$1" formated as "${artist:1}${year:1}-${album:1}"
 }
 
-format_albums_dir(){
-    find . -type d -exec nokia130 format_album_name {} \;
+copy_dir(){
+    #find "$1" -type d -links 2 -exec mkdir -p "$2"/{} \;
+    for dir in */; do
+        cp -r --verbose "$dir"* "$2"/"$dir"
+    done
 }
 
 if [ "$1" = "mk_imageaudio" ];then
@@ -52,6 +54,8 @@ elif [ "$1" = "format_title_tag_dir" ];then
     format_title_tag_dir "$2"
 elif [ "$1" = "format_album_name" ];then
     format_album_name "$2"
+elif [ "$1" = "copy_dir" ];then
+    copy_dir "$2" "$3"
 else
     echo "Command '$1' not supported"
 fi
