@@ -24,20 +24,6 @@ mk_imageaudio(){
     echo $(readlink -f "$file_name" )
 }
 
-format_title_tag(){
-    export PYTHONIOENCODING=utf8
-    new_title=$(eyeD3 -P display --pattern "%track%.%title%" "$1")
-    echo $new_title
-    eyeD3 --title="$new_title" "$1"
-}
-
-format_title_tag_dir(){
-    dir="$1"
-    for i in "$dir"*.mp3; do
-        format_title_tag "$i"
-    done;
-}
-
 format_album_name(){
     album=$(eyeD3 -P nfo "$1" | grep Album | cut -d: -f2)
     artist=$(eyeD3 -P nfo "$1" | grep Artist | cut -d: -f2)
@@ -54,10 +40,6 @@ copy_dir(){
 
 if [ "$1" = "mk_imageaudio" ];then
     mk_imageaudio "$2"
-elif [ "$1" = "format_tracks_titles" ];then
-    format_tracks_titles "$2"
-elif [ "$1" = "format_title_tag_dir" ];then
-    format_title_tag_dir "$2"
 elif [ "$1" = "format_album_name" ];then
     format_album_name "$2"
 elif [ "$1" = "copy_dir" ];then
