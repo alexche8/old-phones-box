@@ -1,10 +1,17 @@
 #!/bin/bash
 
-# 1. Make imageaudio, textedaudio, blackscreenaudio
-# 4. Copy contact book.
-# 6. Download youtube video and playlists
+# 1. Make textedaudio
 
 export PYTHONIOENCODING=utf8
+
+convert_video(){
+    output="${1%.*}"_nokia130.mp4
+    ffmpeg -i "$1" -c:v mpeg4 -q:v 3 -c:a mp3 -vf scale=160:-1 "$output"
+}
+
+pull_youtube_playlist(){
+    youtube-dl -o "%(title)s.%(ext)s" "$1"
+}
 
 mk_imageaudio(){
     file_name="${1%.*}"_nokia130.mp4
@@ -40,7 +47,6 @@ format_album_name(){
 }
 
 copy_dir(){
-    #find "$1" -type d -links 2 -exec mkdir -p "$2"/{} \;
     for dir in */; do
         cp -r --verbose "$dir"* "$2"/"$dir"
     done
@@ -56,6 +62,10 @@ elif [ "$1" = "format_album_name" ];then
     format_album_name "$2"
 elif [ "$1" = "copy_dir" ];then
     copy_dir "$2" "$3"
+elif [ "$1" = "pull_youtube_playlist" ];then
+    pull_youtube_playlist "$2"
+elif [ "$1" = "convert_video" ];then
+    convert_video "$2"
 else
     echo "Command '$1' not supported"
 fi
